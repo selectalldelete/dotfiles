@@ -1,0 +1,4 @@
+#			'bg'	  'fg'	    'bgalt'   'hlbg'    'hlfg'
+rofi.color-window: 	#2f343f,  #f3f4f5,  #2f343f,  #2f343f,  #9575cd
+rofi.color-normal: 	#2f343f,  #f3f4f5,  #2f343f,  #2f343f,  #9575cd
+rofi.color-active: 	#2f343f,  #f3f4f5,  #2f343f,  #2f343f,  #9575cd
