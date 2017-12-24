@@ -26,9 +26,6 @@ font pango:System San Francisco Display 12
 # X core fonts rendering does not support right-to-left and this being a bitmap
 # font, it doesn’t scale on retina/hidpi displays.
 
-# Disable touchpad while typing
-exec syndaemon -i 1 -K -d
-
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -40,7 +37,57 @@ bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
 #bindsym $mod+d exec dmenu_run
-bindsym $mod+d exec rofi -show run -lines 3 -eh 2 -width 100 -padding 500 -opacity "95" -font "System San Francisco Display 18"
+bindsym $mod+d exec rofi -show run -lines 3 -eh 2 -width 100 -padding 500 -opacity "85" -bw 0 -bc "$bg-color" -bg "$bg-color" -fg "$text-color" -hlbg "$bg-color" -hlfg "#9575cd" -font "System San Francisco Display 18"
+
+# Hide window borders
+for_window [class="^.*"] border pixel 1
+
+# Gaps
+set $default_gaps_inner 10
+set $default_gaps_outer 0
+gaps inner $default_gaps_inner
+gaps outer $default_gaps_outer
+
+set $mode_gaps Gaps: (o) outer, (i) inner
+set $mode_gaps_outer Outer Gaps: +|-|d|0 (local), Shift + +|-|d|0 (global)
+set $mode_gaps_inner Inner Gaps: +|-|d|0 (local), Shift + +|-|d|0 (global)
+bindsym $mod+Shift+g mode "$mode_gaps"
+
+mode "$mode_gaps" {
+        bindsym o      mode "$mode_gaps_outer"
+        bindsym i      mode "$mode_gaps_inner"
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+mode "$mode_gaps_inner" {
+        bindsym plus  gaps inner current plus 5
+        bindsym minus gaps inner current minus 5
+        bindsym 0     gaps inner current set 0
+        bindsym d     gaps inner current set $default_gaps_inner
+
+        bindsym Shift+plus  gaps inner all plus 5
+        bindsym Shift+minus gaps inner all minus 5
+        bindsym Shift+0     gaps inner all set 0
+        bindsym Shift+d     gaps inner all set $default_gaps_inner
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_outer" {
+        bindsym plus  gaps outer current plus 5
+        bindsym minus gaps outer current minus 5
+        bindsym 0     gaps outer current set 0
+        bindsym d     gaps outer current set $default_gaps_outer
+
+        bindsym Shift+plus  gaps outer all plus 5
+        bindsym Shift+minus gaps outer all minus 5
+        bindsym Shift+0     gaps outer all set 0
+        bindsym Shift+d     gaps outer all set $default_gaps_outer
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
 
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
@@ -98,17 +145,13 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 set $workspace1 "1: "
-set $workspace2 "2: "
-set $workspace3 "3: "
-set $workspace4 "4: "
-set $workspace5 "5: "
 
 # switch to workspace
 bindsym $mod+1 workspace $workspace1
-bindsym $mod+2 workspace $workspace2
-bindsym $mod+3 workspace $workspace3
-bindsym $mod+4 workspace $workspace4
-bindsym $mod+5 workspace $workspace5
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+bindsym $mod+4 workspace 4
+bindsym $mod+5 workspace 5
 bindsym $mod+6 workspace 6
 bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
@@ -117,10 +160,10 @@ bindsym $mod+0 workspace 10
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $workspace1
-bindsym $mod+Shift+2 move container to workspace $workspace2
-bindsym $mod+Shift+3 move container to workspace $workspace3
-bindsym $mod+Shift+4 move container to workspace $workspace4
-bindsym $mod+Shift+5 move container to workspace $workspace5
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+bindsym $mod+Shift+4 move container to workspace 4
+bindsym $mod+Shift+5 move container to workspace 5
 bindsym $mod+Shift+6 move container to workspace 6
 bindsym $mod+Shift+7 move container to workspace 7
 bindsym $mod+Shift+8 move container to workspace 8
@@ -167,24 +210,29 @@ bindsym $mod+r mode "resize"
 
 hide_edge_borders both
 
-set $bg-color 	         #2f343f
-set $inactive-bg-color   #2f343f
+#set $bg-color 	         #2f343f
+set $bg-color 	         #343434
+#set $inactive-bg-color   #2f343f
+set $inactive-bg-color   #343434
 set $text-color          #f3f4f5
-set $inactive-text-color #676E7D
+#set $inactive-text-color #676E7D
+set $inactive-text-color #7f838b
 set $urgent-bg-color     #E53935
+set $border-color	 #b0b0b0
 
 # window colors
-#                       border              background         text                 indicator
-client.focused          $bg-color           $bg-color          $text-color          #00ff00
-client.unfocused        $inactive-bg-color  $inactive-bg-color $inactive-text-color #00ff00
-client.focused_inactive $inactive-bg-color  $inactive-bg-color $inactive-text-color #00ff00
-client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          #00ff00
+#                       border              background         text                 indicator		child-border
+client.focused          $border_color	    $bg-color          $text-color          $border-color	$border-color
+client.unfocused        $inactive-bg-color  $inactive-bg-color $inactive-text-color $border-color	$border-color
+client.focused_inactive $inactive-bg-color  $inactive-bg-color $inactive-text-color $border-color	$border-color
+client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          $border-color	$border-color
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
         status_command i3blocks -c ~/.config/i3/i3blocks.conf
         tray_output primary
+	position top
 	colors {
 		background $bg-color
 	    	separator #757575
@@ -220,11 +268,7 @@ bindsym XF86AudioPrev exec playerctl previous
 #exec firefox
 
 # Set Background
-exec_always feh --bg-scale /home/adam/Pictures/wallpaper.jpg
+exec_always feh --bg-scale /home/adam/wallpaper.jpg
 
 # Load compton
 exec compton -f
-
-# Set resolution
-exec xrandr --output VIRTUAL1 --off --output eDP1 --mode 2048x1152 --pos 0x0 --rotate normal --output DP1 --off --output HDMI2 --off --output HDMI1 --off --output DP2 --off
-
